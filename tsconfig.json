@@ -1,4 +1,9 @@
 {
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "es2022",
+    // outras opções...
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

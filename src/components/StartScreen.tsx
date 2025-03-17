@@ -1,11 +1,13 @@
 import { Dispatch } from 'react';
 
+
+
 interface StartScreenProps {
   numQuestions: number;
   dispatch: Dispatch<{ type: string }>;
 }
 
-const StartScreen = ({ numQuestions, dispatch }: StartScreenProps) => {
+const StartScreen: React.FC<StartScreenProps> = ({ numQuestions, dispatch }) => {
 
   return (
     <div className="start">

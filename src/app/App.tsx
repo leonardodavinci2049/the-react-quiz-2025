@@ -1,7 +1,7 @@
-import { useEffect, useReducer } from 'react';
+import  { useEffect, useReducer } from 'react';
 import Header from '../components/Header';
 import Main from '../components/Main';
-import StartScreen from '../components/StartScreen';
+
 import Loader from '../components/Loader';
 import Error from '../components/Error';
 import Progress from '../components/Progress';
@@ -13,7 +13,40 @@ import FinishScreen from '../components/FinishScreen';
 
 const SECS_PER_QUESTION = 30;
 
-const initialState = {
+// Defina seus tipos aqui
+type Question = {
+  question: string;
+  options: string[];
+  correctOption: number;
+  points: number;
+};
+
+type StatusType = 'finished' | 'ready' | 'loading' | 'error' | 'active';
+
+// Defina todos os tipos de ações possíveis
+type Action = 
+  | { type: 'dataReceived'; payload: Question[] }
+  | { type: 'dataFailed' }
+  | { type: 'start' }
+  | { type: 'newAnswer'; payload: number }
+  | { type: 'nextQuestion' }
+  | { type: 'finish' }
+  | { type: 'restart' }
+  | { type: 'tick' }
+  | { type: 'someAction' };
+
+interface State {
+  questions: Question[];
+  status: StatusType;
+  index: number;
+  answer: number | null;
+  points: number;
+  highscore: number;
+  secondsRemaining: number | null;
+}
+
+// Definição do initialState
+const initialState: State = {
   questions: [],
 
   // 'loading', 'error', 'ready', 'active', 'finished'
@@ -22,10 +55,11 @@ const initialState = {
   answer: null,
   points: 0,
   highscore: 0,
+
   secondsRemaining: null,
 };
 
-function reducer(state, action) {
+function operationReducer(state: State, action: Action): State {
   switch (action.type) {
     case 'dataReceived':
       return {
@@ -44,8 +78,8 @@ function reducer(state, action) {
         status: 'active',
         secondsRemaining: state.questions.length * SECS_PER_QUESTION,
       };
-    case 'newAnswer':
-      const question = state.questions.at(state.index);
+    case 'newAnswer': {
+      const question = state.questions[state.index];
 
       return {
         ...state,
@@ -55,6 +89,7 @@ function reducer(state, action) {
             ? state.points + question.points
             : state.points,
       };
+    }
     case 'nextQuestion':
       return { ...state, index: state.index + 1, answer: null };
     case 'finish':
@@ -78,20 +113,32 @@ function reducer(state, action) {
     case 'tick':
       return {
         ...state,
-        secondsRemaining: state.secondsRemaining - 1,
+        secondsRemaining:
+          state.secondsRemaining !== null ? state.secondsRemaining - 1 : 0,
         status: state.secondsRemaining === 0 ? 'finished' : state.status,
       };
-
+    case 'someAction':
+      return {
+        ...state,
+        status: 'loading', // Agora usando um valor específico permitido
+        // outros campos...
+      };
     default:
-      throw new Error('Action unkonwn');
+      return state;
   }
 }
 
 const App = () => {
-  const [
-    { questions, status, index, answer, points, highscore, secondsRemaining },
-    dispatch,
-  ] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(operationReducer, initialState);
+  const {
+    questions,
+    status,
+    index,
+    answer,
+    points,
+    highscore,
+    secondsRemaining,
+  } = state;
 
   const numQuestions = questions.length;
   const maxPossiblePoints = questions.reduce(
@@ -103,7 +150,7 @@ const App = () => {
     fetch('http://localhost:9000/questions')
       .then((res) => res.json())
       .then((data) => dispatch({ type: 'dataReceived', payload: data }))
-      .catch((err) => dispatch({ type: 'dataFailed' }));
+      .catch(() => dispatch({ type: 'dataFailed' }));
   }, []);
 
   return (
@@ -113,7 +160,10 @@ const App = () => {
         {status === 'loading' && <Loader />}
         {status === 'error' && <Error />}
         {status === 'ready' && (
-          <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
+          <StartScreen 
+            numQuestions={numQuestions} 
+            dispatch={dispatch as Dispatch<{ type: string }> } 
+          />
         )}
         {status === 'active' && (
           <>
@@ -154,3 +204,16 @@ const App = () => {
 };
 
 export default App;
+
+// Em StartScreen.tsx
+import { Dispatch } from 'react';
+import { Action } from './types'; // Importe o tipo Action que você definiu
+
+type StartScreenProps = {
+  numQuestions: number;
+  dispatch: Dispatch<Action>; // Use o tipo Action específico
+};
+
+function StartScreen({ numQuestions, dispatch }: StartScreenProps) {
+  // ...o código do componente
+}
