@@ -3,7 +3,7 @@ type MainProps = {
 };
 
 const Main = ({ children }: MainProps) => {
-  return <main className="main">{children}</main>;
+  return <main className="w-[600px]">{children}</main>;
 };
 
 export default Main;

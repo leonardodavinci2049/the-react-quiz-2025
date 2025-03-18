@@ -3,8 +3,8 @@
 import { Dispatch } from 'react';
 
 interface NextButtonProps {
-  dispatch: Dispatch<any>;
-  answer: any;
+  dispatch: Dispatch<{ type: string }>;
+  answer: number | null;
   index: number;
   numQuestions: number;
 }

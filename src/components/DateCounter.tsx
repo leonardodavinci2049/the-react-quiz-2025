@@ -1,8 +1,19 @@
 import { useReducer } from "react";
 
-const initialState = { count: 0, step: 1 };
+interface State {
+  count: number;
+  step: number;
+}
 
-function reducer(state, action) {
+type Action = 
+| { type: "inc" | "dec" }
+| { type: "setCount" | "setStep", payload: number }
+| { type: "reset" };
+
+// Definição do initialState
+const initialState: State = { count: 0, step: 1 };
+
+function reducerOperation(state: State, action: Action) {
   console.log(state, action);
 
   switch (action.type) {
@@ -22,8 +33,9 @@ function reducer(state, action) {
 }
 
 const DateCounter = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const { count, step } = state;
+
+  const [state, dispatch] = useReducer(reducerOperation, initialState);
+  const { count, step }: State = state;
 
   // This mutates the date object.
   const date = new Date("june 21 2027");
@@ -37,11 +49,11 @@ const DateCounter = () => {
     dispatch({ type: "inc" });
   };
 
-  const defineCount = function (e) {
+  const defineCount = function (e: React.ChangeEvent<HTMLInputElement>) {
     dispatch({ type: "setCount", payload: Number(e.target.value) });
   };
 
-  const defineStep = function (e) {
+  const defineStep = function (e: React.ChangeEvent<HTMLInputElement>) {
     dispatch({ type: "setStep", payload: Number(e.target.value) });
   };
 
@@ -52,8 +64,8 @@ const DateCounter = () => {
 
 
   return (
-    <div className="counter">
-      <div>
+    <div className="flex flex-col items-center gap-4 text-2xl font-bold m-24">
+        <div className="p-3">
         <input
           type="range"
           min="0"
@@ -64,7 +76,7 @@ const DateCounter = () => {
         <span>{step}</span>
       </div>
 
-      <div>
+      <div className="p-3">
         <button onClick={dec}>-</button>
         <input value={count} onChange={defineCount} />
         <button onClick={inc}>+</button>

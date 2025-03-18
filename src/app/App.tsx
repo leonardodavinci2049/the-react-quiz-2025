@@ -10,22 +10,19 @@ import Footer from '../components/Footer';
 import Timer from '../components/Timer';
 import NextButton from '../components/NextButton';
 import FinishScreen from '../components/FinishScreen';
+import StartScreen from '../components/StartScreen';
+import { QuestionType } from '../types/typeQuestions';
 
 const SECS_PER_QUESTION = 30;
 
 // Defina seus tipos aqui
-type Question = {
-  question: string;
-  options: string[];
-  correctOption: number;
-  points: number;
-};
+
 
 type StatusType = 'finished' | 'ready' | 'loading' | 'error' | 'active';
 
 // Defina todos os tipos de ações possíveis
 type Action = 
-  | { type: 'dataReceived'; payload: Question[] }
+  | { type: 'dataReceived'; payload: QuestionType[] }
   | { type: 'dataFailed' }
   | { type: 'start' }
   | { type: 'newAnswer'; payload: number }
@@ -36,7 +33,7 @@ type Action =
   | { type: 'someAction' };
 
 interface State {
-  questions: Question[];
+  questions: QuestionType[];
   status: StatusType;
   index: number;
   answer: number | null;
@@ -59,7 +56,7 @@ const initialState: State = {
   secondsRemaining: null,
 };
 
-function operationReducer(state: State, action: Action): State {
+function reducerOperation(state: State, action: Action): State {
   switch (action.type) {
     case 'dataReceived':
       return {
@@ -129,7 +126,7 @@ function operationReducer(state: State, action: Action): State {
 }
 
 const App = () => {
-  const [state, dispatch] = useReducer(operationReducer, initialState);
+  const [state, dispatch] = useReducer(reducerOperation, initialState);
   const {
     questions,
     status,
@@ -162,7 +159,7 @@ const App = () => {
         {status === 'ready' && (
           <StartScreen 
             numQuestions={numQuestions} 
-            dispatch={dispatch as Dispatch<{ type: string }> } 
+            dispatch={dispatch as React.Dispatch<{ type: string }> } 
           />
         )}
         {status === 'active' && (
@@ -175,14 +172,14 @@ const App = () => {
               answer={answer}
             />
             <Question
-              question={questions[index]}
-              dispatch={dispatch}
+              question={questions[index] }
+              dispatch={dispatch as React.Dispatch<{ type: string, payload:number }> }
               answer={answer}
             />
             <Footer>
-              <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />
+              <Timer dispatch={dispatch as React.Dispatch<{ type: string }> } secondsRemaining={secondsRemaining} />
               <NextButton
-                dispatch={dispatch}
+                dispatch={dispatch as React.Dispatch<{ type: string }> }
                 answer={answer}
                 numQuestions={numQuestions}
                 index={index}
@@ -195,7 +192,7 @@ const App = () => {
             points={points}
             maxPossiblePoints={maxPossiblePoints}
             highscore={highscore}
-            dispatch={dispatch}
+            dispatch={dispatch as React.Dispatch<{ type: string }> }
           />
         )}
       </Main>
@@ -204,16 +201,3 @@ const App = () => {
 };
 
 export default App;
-
-// Em StartScreen.tsx
-import { Dispatch } from 'react';
-import { Action } from './types'; // Importe o tipo Action que você definiu
-
-type StartScreenProps = {
-  numQuestions: number;
-  dispatch: Dispatch<Action>; // Use o tipo Action específico
-};
-
-function StartScreen({ numQuestions, dispatch }: StartScreenProps) {
-  // ...o código do componente
-}

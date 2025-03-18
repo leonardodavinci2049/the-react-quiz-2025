@@ -3,13 +3,13 @@
 import { Dispatch, useEffect } from 'react';
 
 interface TimerProps {
-  dispatch: Dispatch<any>;
-  secondsRemaining: number;
+  dispatch: Dispatch<{ type: string }>;
+  secondsRemaining : number | null;
 }
 
-const Timer: React.FC<TimerProps> = ({ dispatch, secondsRemaining }) => {
-  const mins = Math.floor(secondsRemaining / 60);
-  const seconds = secondsRemaining % 60;
+const Timer = ({ dispatch, secondsRemaining }:TimerProps) => {
+  const mins = Math.floor((secondsRemaining ?? 0) / 60);
+  const seconds = (secondsRemaining ?? 0) % 60;
 
   useEffect(
     function () {
@@ -25,7 +25,7 @@ const Timer: React.FC<TimerProps> = ({ dispatch, secondsRemaining }) => {
 
 
   return (
-    <div className="timer">
+    <div className="float-left text-lg text-gray-500 border-2 border-gray-800 py-5 px-11 rounded-full">
       {mins < 10 && "0"}
       {mins}:{seconds < 10 && "0"}
       {seconds}

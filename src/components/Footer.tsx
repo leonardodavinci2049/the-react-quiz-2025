@@ -1,10 +1,11 @@
+import { JSX, ReactNode } from 'react';
+
 type FooterProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-
-const Footer = ({ children }: FooterProps) => {
+const Footer = ({ children }: FooterProps): JSX.Element => {
   return <footer>{children}</footer>;
-}
+};
 
-export default Footer
+export default Footer;
