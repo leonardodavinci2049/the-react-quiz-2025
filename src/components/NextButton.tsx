@@ -1,15 +1,11 @@
 
+import useQuiz from '../contexts/useQuiz';
 
-import { Dispatch } from 'react';
 
-interface NextButtonProps {
-  dispatch: Dispatch<{ type: string }>;
-  answer: number | null;
-  index: number;
-  numQuestions: number;
-}
 
-const NextButton = ({ dispatch, answer, index, numQuestions }: NextButtonProps) => {
+const NextButton = () => {
+  const { dispatch, answer, index, numQuestions } = useQuiz();
+
   if (answer === null) return null;
 
   if (index < numQuestions - 1)

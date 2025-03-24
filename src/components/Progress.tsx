@@ -1,34 +1,16 @@
-type ProgressProps = {
-  index: number;
-  numQuestions: number;
-  points: number;
-  maxPossiblePoints: number;
-  answer: number | null;
-};
+import useQuiz from "../contexts/useQuiz";
 
-const Progress = ({
-  index,
-  numQuestions,
-  points,
-  maxPossiblePoints,
-  answer,
-}: ProgressProps) => {
+const Progress = () => {
+  const { index, numQuestions, points, maxPossiblePoints, answer } = useQuiz();
   return (
-    <header className="mb-8 grid grid-cols-2 justify-between gap-5 text-lg text-gray-500">
-      <div className="col-span-2 h-3 w-full rounded-full bg-gray-300">
-        <div
-          className="h-full rounded-full bg-emerald-600"
-          style={{
-            width: `${((index + Number(answer !== null)) / numQuestions) * 100}%`,
-          }}
-        ></div>
-      </div>
+    <header className="progress">
+      <progress max={numQuestions} value={index + Number(answer !== null)} />
 
       <p>
-        Questão <strong>{index + 1}</strong> / {numQuestions}
+        Question <strong>{index + 1}</strong> / {numQuestions}
       </p>
 
-      <p className="justify-self-end">
+      <p>
         <strong>{points}</strong> / {maxPossiblePoints}
       </p>
     </header>

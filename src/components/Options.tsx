@@ -1,30 +1,30 @@
-import { QuestionType } from "../types/typeQuestions";
+import useQuiz from "../contexts/useQuiz";
 
 
-interface OptionsProps {
-  question: QuestionType;
-  dispatch: React.Dispatch<{ type: string; payload: number }>;
-  answer: number | null;
+interface Question {
+  options: string[];
+  correctOption: number;
 }
 
-const Options  = ({ question, dispatch, answer }:OptionsProps) => {
+const Options = ({ question }: { question: Question }) => {
+  const { dispatch, answer } = useQuiz();
+
   const hasAnswered = answer !== null;
 
   return (
-    <div className="flex flex-col mb-12 gap-4">
-      <p className="text-2xl font-bold mb-4">Choose an option:</p>
+    <div className="options">
       {question.options.map((option, index) => (
         <button
-          className={`btn btn-option ${index === answer ? " translate-x-8" : ""} ${
+          className={`btn btn-option ${index === Number(answer) ? "answer" : ""} ${
             hasAnswered
               ? index === question.correctOption
-                  ? "bg-theme border-2 border-theme text-light"
-                  : "bg-accent border-2 border-accent text-darkest"
+                ? "correct"
+                : "wrong"
               : ""
           }`}
           key={option}
           disabled={hasAnswered}
-          onClick={() => dispatch({ type: "newAnswer", payload: index })}
+          onClick={() => dispatch({ type: "newAnswer", payload: String(index) })}
         >
           {option}
         </button>
